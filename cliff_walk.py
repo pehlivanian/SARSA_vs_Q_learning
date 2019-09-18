@@ -6,8 +6,39 @@ import sys
 import matplotlib.pyplot as plt
 from fsm import CliffWalkingStateMachine, SARSA_decorator, Q_learner_decorator
 
-nrows                   = 4
-ncols                   = 8
+'''
+    Setup for cliff-walking exercise. The grid is of size (nrows, ncols), with allowable
+    actions: up, down, left, right.
+
+    The setup requires specification of the following
+
+        ACTIONS         =  ['UP', 'DOWN', 'LEFT', 'RIGHT' ]
+        VISIBLE_STATES  =  ['START', 'INTERIOR', 'OOB', 'EDGE', 'CLIFF', 'DESTINATION' ]
+        INITIAL_STATE   =  'START'
+        TERMINAL_STATES =  ['CLIFF', 'DESTINATION'] 
+        REWARDS         =  [-1, -1, -1, -1, -100, -1]
+
+    The boundary conditions should also be setup
+
+        _isEdgeCoordinate(self, x, y)
+        _isCliffCoordinate(self, x, y)
+        _isStartCoordinate(self, x, y)
+        _isDestinationCoordinate(self, x, y)
+        _isOOBCoordinate(self, x, y)
+
+  A CliffWalk class with below parameters provides a typical example of a walk on a 8x10 grid,
+  starting at (0,0), with destination (10,-1), and repelling walls along the lines {x = 0}, {y = 8},
+  and { x = 10 }.
+
+  Change the parameters below to modify the grid size, rewards, solving parameters for SARSA,
+  Q-learning solvers.
+
+  Output in '{solver type}_Q_hat.png'
+
+'''    
+    
+nrows                   = 8
+ncols                   = 10
 nact                    = 4
 
 nepisodes               = 100000
@@ -46,20 +77,13 @@ class CliffWalk(CliffWalkingStateMachine):
         return x <= -1 or x >= ncols or y >= nrows and \
             not self._isStartCoordinate(x, y) and not self._isDestinationCoordinate(x, y)
     
-    @functools.lru_cache(maxsize=512)
-    def _isInteriorCoordinate(self, x, y):
-        return not self._isEdgeCoordinate(x, y) and \
-            not self._isCliffCoordinate(x, y) and \
-            not self._isStartCoordinate(x, y) and \
-            not self._isDestinationCoordinate(x, y) and \
-            not self._isOOBCoordinate(x, y)
-        
     def _goToStart(self):
         self.setState('START')
         self.set_coordinates(self.START_COORDINATES)
         return self.START_COORDINATES
 
 
+# Use Q_learning
 cw = Q_learner_decorator( CliffWalk( nrows, ncols), alpha, gamma, epsilon)
 
 for n in range(nepisodes+1):
