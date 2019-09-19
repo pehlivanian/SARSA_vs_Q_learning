@@ -37,11 +37,11 @@ from fsm import CliffWalkingStateMachine, SARSA_decorator, Q_learner_decorator
 
 '''    
     
-nrows                   = 8
-ncols                   = 10
+nrows                   = 25
+ncols                   = 25
 nact                    = 4
 
-nepisodes               = 100000
+nepisodes               = 1000000
 epsilon                 = 0.25
 alpha                   = 0.1
 gamma                   = 0.95
